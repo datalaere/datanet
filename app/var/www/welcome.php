@@ -9,4 +9,4 @@
     <p>Any malicious and/or unauthorized activity is strictly forbidden.</p>
     <p>Disconnect IMMEDIATELY if you are not an authorized user!</p>
     <br>
-    <p>Use "/login [server] [username]@[password] (private key)" to join server.<p>
+    <p>Connect to host with "LOGIN [host] [username]@[password]".<p>

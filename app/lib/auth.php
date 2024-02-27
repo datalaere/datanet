@@ -3,52 +3,43 @@
 
    $input = filterInput(Request::get('input'), false);
 
-   if( checkBlacklist(getVisitorIP(), APP . 'etc/blacklist') ) {
-        echo '<br>ERROR: IP in blacklist. Login terminated!<br>';
+   if( checkBlacklist(getVisitorIP(), APP . 'etc/hosts.deny') ) {
+        echo '<br>ERROR: IP blacklisted. Login terminated!<br>';
         return false;
    }
 
 
-    if($input == 'help') {
+    if($input == 'HELP') {
 
-        echo '<br>Use "/login [server] [username]@[password] (private key)" to join server.<br>';
+        echo '<br>Connect to host with "LOGIN [host] [username]@[password]".<br>';
 
         return false;
     }
 
-        $connection = cmdJOIN($input, APP . 'etc/passwd/');
+    $connection = cmd_connect($input, APP . 'etc/passwd/');
 
         if(!$connection) {
 
-            echo '<br>Missing parameters. Use "/login [server] [username]@[password] (private key)" to join server.<br>';
+            echo '<br>Missing parameters OR non-alphanumeric credentials. <br> Connect to host with "LOGIN [host] [username]@[password]".<br>';
 
             return false;
 
         }
 
 
-    if(Session::get('key'))  {
+        $username = Session::get('username');
 
-        $dec = new Encryptor(Session::get('key'));  
+        $host = Session::get('host');
 
-    } else {
+        $session['host'] = APP . "etc/hosts/{$host}/sys/motd";
 
-        $dec = new Encryptor(false);
+        $session['bin'] = APP . "etc/hosts/{$host}/bin";
 
-    }
+        $session['username'] = APP . "etc/hosts/{$host}/home/{$username}";
 
+        $session['passwd'] = APP . "etc/hosts/{$host}/sys/passwd";
 
-        $nickname = Session::get('nickname');
-
-        $channel = Session::get('channel');
-
-        $session['channel'] = APP . "sys/network/{$channel}.server";
-
-        $session['user'] = APP . "etc/passwd/{$channel}/{$nickname}.user";
-
-        $session['passwd'] = APP . "etc/passwd/{$channel}/";
-
-        $session['log'] = APP . "var/system/{$channel}.{$nickname}.log";
+        $session['log'] = APP . "etc/hosts/{$host}/sys/system.log";
           
         $user_ip = getVisitorIP();
 
@@ -56,14 +47,15 @@
           
         $data = '';
 
-if(file_exists($session['channel'])) {
-        $data = $dec->decrypt(file_get_contents($session['channel']));
+if(file_exists($session['host'])) {
+
+        $data = file_get_contents($session['host']);
 
         if(!$data) {
           
             session_destroy();
 
-            checkBlacklist(getVisitorIP(), APP . 'etc/blacklist', true);
+            checkBlacklist(getVisitorIP(), APP . 'etc/hosts.deny', true);
           
             echo '<br>ERROR: Wrong credentials. Login terminated!<br>';
 
@@ -71,21 +63,19 @@ if(file_exists($session['channel'])) {
         }
     }
     
-    if(file_exists($session['user'])) {
+if(file_exists($session['username'])) {
 
-            $user = unserialize(file_get_contents($session['user']));
+            $user = unserialize(file_get_contents($session['passwd'] . '/' . $username));
 
 
             if(password_verify(Session::get('password'), $user['password'])) {
 
                $color = $user['color'];
 
-                $data .= "<div user='{$nickname}' $color class='response'><i>[" . $date . "] <b>". $nickname ."</b> (". $user_ip .") joined server.</i><br></div>". PHP_EOL;
+                $data .= "<div user='{$username}' $color class='response'>[" . $date . "] <b>". $username ."</b> (". $user_ip .") conntected to {$host}.<br></div>". PHP_EOL;
 
                 //Simple welcome message
-                $data = $dec->encrypt($data);
-
-                file_put_contents($session['channel'], $data);
+                file_put_contents($session['host'], $data);
 
                 unset($data);
 
@@ -93,19 +83,13 @@ if(file_exists($session['channel'])) {
 
                 Session::put('auth', true);
 
-                logger("{$nickname} joined channel.", $session['log']);
+                logger("{$username} connected to {$host}.", $session['log']);
 
                 echo 'ok';
 
                 return true;
 
             } else {
-              
-                if($input == 'exit'){
-                    session_destroy();
-                    echo 'error';
-                    return false;
-                }
 
                 if( !Session::get('token') ) {
 
@@ -124,7 +108,7 @@ if(file_exists($session['channel'])) {
 
                         session_destroy();
 
-                        checkBlacklist(getVisitorIP(), APP . 'etc/blacklist', true);
+                        checkBlacklist(getVisitorIP(), APP . 'etc/hosts.deny', true);
 
                         echo 'error';
 
@@ -142,32 +126,36 @@ if(file_exists($session['channel'])) {
 
         $session_data = [
             'id' => uniqid($user_ip),
-            'joined' => getTimestamp(),
+            'connected' => getTimestamp(),
             'ip' => $user_ip,
-            'nickname' => filterInput(Session::get('nickname'), true),
+            'username' => filterInput(Session::get('username'), true),
             'password' => password_hash(Session::get('password'), PASSWORD_DEFAULT),
-            'channel' => filterInput(Session::get('channel'), true),
+            'host' => filterInput(Session::get('host'), true),
             'color' => setColor(),
         ];
 
+            if ( !file_exists($session['username']) ) {
+                
+                mkdir($session['username'], 0777, true);
+            }
           
             if ( !file_exists($session['passwd']) ) {
+
+                mkdir($session['bin'], 0777, true);
           
                 mkdir($session['passwd'], 0777, true);
             }
 
-        file_put_contents($session['user'], serialize($session_data));
+        file_put_contents($session['passwd'] . "/{$username}", serialize($session_data));
 
         $color = $session_data['color'];
 
         //Simple welcome message
-        $data .= "<div user='{$nickname}' $color class='response'><i>[" . $date . "] <b>". $nickname ."</b> (". $user_ip .") joined server.</i><br></div>". PHP_EOL;
 
+        $data .= "Welcome to {$host} <br><br> UNAUTHORIZED ACCESS TO THIS DEVICE IS PROHIBITED <br><br> You must have explicit, authorized permission to access or configure this device. Unauthorized attempts and actions to access or use this system may result in civil and/or criminal penalties. All activities performed on this device are logged and monitored.<br><br>";
+        $data .= "<div user='{$username}' $color class='response'>[" . $date . "] <b>". $username ."</b> (". $user_ip .") connected to {$host}.<br></div>". PHP_EOL;
 
-        $data = $dec->encrypt($data);
-
-
-        file_put_contents($session['channel'], $data);
+        file_put_contents($session['host'], $data);
 
         unset($data);
 
@@ -175,7 +163,7 @@ if(file_exists($session['channel'])) {
 
         Session::put('color', $color);
 
-        logger("{$nickname} joined server.", $session['log']);
+        logger("{$username} connected to {$host}.", $session['log']);
 
         echo 'ok';
 

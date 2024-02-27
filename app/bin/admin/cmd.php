@@ -1,27 +1,25 @@
 <?php
 
-if($input == '/clear') {
+if($input == 'CLEAR') {
 
         $data = '';
 
-        $input = "<i>channel cleared by @{$nickname}.</i>";
+        $input = "MOTD cleared by @{$username}.";
   
-        $nickname = 'system';
+        $username = 'system';
 }
 
-if($input == '/reset') {
+if($input == 'RESET') {
 
-  $data = preg_replace("/<div user='system' [^>]*>.*?<\/div>/i", '', $data);
-      
-  $data = $dec->encrypt($data);
+  $data = preg_replace("/<div user='system' [^>]*>.*?<\/div>/", '', $data);
 
-  file_put_contents($session['channel'], $data);
+  file_put_contents($session['host'], $data);
 
   $data = false;
 }
 
 
-if($input == '/scan') {
+if($input == 'SCAN') {
 
   $input .= explode(" ", $input)[1];
   

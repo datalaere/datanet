@@ -1,10 +1,6 @@
 <?php
 
-define('APP_NAME', 'DATANET');
-
-ini_set('display_errors', 1);
-
-date_default_timezone_set('Europe/Copenhagen');
+require_once APP . 'sys/config.php';
 
 spl_autoload_register(function($class) {
     require_once APP . 'usr/' . $class . '.php';
@@ -12,5 +8,6 @@ spl_autoload_register(function($class) {
 
 require APP . 'boot/functions.php';
 require APP . 'boot/session.php';
+require APP . 'boot/cmd.php';
 
 lastVisit();

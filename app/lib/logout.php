@@ -1,12 +1,13 @@
 <?php
   
-    if (file_exists($session['channel'])) {
+    if (file_exists($session['host'])) {
 
-      $dec = new Encryptor(Session::get('key'));
 
-      $data = $dec->decrypt(file_get_contents($session['channel']));
+      $data = file_get_contents($session['host']);
 
-      $nickname = Session::get('nickname');
+      $username = Session::get('username');
+
+      $host = Session::get('host');
 
       $ip = Session::get('ip');
 
@@ -14,18 +15,16 @@
 
             $color = Session::get('color');
 
-              $data .= "<div user='{$nickname}' $color class='response'><i>[" . getTimestamp(false) . "] <b>". $nickname ."</b> (". $ip .") left server.</i><br></div>". PHP_EOL;
+              $data .= "<div user='{$username}' $color class='response'>[" . getTimestamp(false) . "] <b>". $username ."</b> (". $ip .") disconnected from {$host}.<br></div>". PHP_EOL;
 
-              $data = $dec->encrypt($data);
-
-              file_put_contents($session['channel'], $data);
+              file_put_contents($session['host'], $data);
 
               unset($data);
 
       }
     }
 
-    logger("{$nickname} left channel.", $session['log']);
+    logger("{$username} disconnect from {$host}.", $session['log']);
 
     session_destroy();
 

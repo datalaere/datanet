@@ -4,10 +4,10 @@
     
     <?php include 'templates/nav.php' ?>   
   
-    <div id="terminal"><?php echo('Please wait... type "/help" for commands.'); ?></div>
+    <div id="terminal"><?php echo('Please wait... type "HELP" for commands.'); ?></div>
   
     <form name="message">
-        <b><?php echo(Session::get('channel')); ?>@<?php echo(Session::get('nickname')); ?> ></b> <input name="input" type="text" id="input" size="1024" />
+        <b><?php echo(Session::get('host')); ?>@<?php echo(Session::get('username')); ?> ></b> <input name="input" type="text" id="input" size="1024" />
     </form>
 </div>
 
@@ -20,7 +20,7 @@ $(document).ready(function(){
 
     //If user wants to end session
     $("#exit").click(function(){
-        var exit = confirm("Are you sure you want to disconnect from session?");
+        var exit = confirm("Disconnect from session?");
         if(exit==true){window.location = 'server.php?action=logout'}      
     });
 
@@ -33,7 +33,7 @@ $(document).ready(function(){
         var client = $("#input").val();
 
         // Secret exit...
-        if(client == '/quit' || client == '/part' || client == '/exit') {
+        if(client == 'DC' || client == 'DISCONNECT' || client == 'LOGOUT') {
            window.location = 'server.php?action=logout';
            return false;
         }

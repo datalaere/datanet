@@ -1,12 +1,11 @@
 <?php
 
-    $dec = new Encryptor(Session::get('key'));
     
-	if (isset($session['channel']) && file_exists($session['channel'])) {
+	if (isset($session['host']) && file_exists($session['host'])) {
 
-       $data = $dec->decrypt(file_get_contents($session['channel']));
+       $data = file_get_contents($session['host']);
        
-        if($data) {
+        if(!is_null($data)) {
 
             echo $data;
     
@@ -14,13 +13,13 @@
 
         } else {
           
-            echo "<div  class='response'>(".date('H:i:s').") <b>".'system'."</b>: ERROR. Please contact sysadmin.<br></div>";
+            echo "<div  class='response'>(".date('H:i:s').") <b>".'system'."</b>: ERROR. Please contact sysadmin!<br></div>";
           
         }
       
     } else {
         
-      require APP . "var/www/templates/welcome.php";
+      require APP . "var/www/welcome.php";
     } 
 
 

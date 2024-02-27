@@ -1,16 +1,14 @@
 <?php
 
-    $dec = new Encryptor(Session::get('key'));
-
     $input = filterInput(Request::get('input'));
 
-    $nickname = Session::get('nickname');
+    $username = Session::get('username');
 
 
-    $data = $dec->decrypt(file_get_contents($session['channel']));
+    $data = file_get_contents($session['host']);
 
     // Special commands
-    if($nickname == 'admin' || $nickname == 'root') {
+    if($username == 'admin' || $username == 'root') {
     
         require_once APP . 'bin/admin/cmd.php';
 
@@ -22,11 +20,9 @@
 
         $color = Session::get('color');
 
-        $data .= "<div user='{$nickname}' $color class='response'>[".getTimestamp(false)."] <b>".$nickname."</b>: ". $input ."<br></div>" . PHP_EOL;
-  
-        $data = $dec->encrypt($data);
+        $data .= "<div user='{$username}' $color class='response'>[".getTimestamp(false)."] <b>".$username."</b>: ". $input ."<br></div>" . PHP_EOL;
 
-        file_put_contents($session['channel'], $data);
+        file_put_contents($session['host'], $data);
 
         unset($data);
 

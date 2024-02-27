@@ -8,17 +8,17 @@ $session = [];
 
 if( Session::exists('auth') ){
 
-    $nickname = Session::get('nickname');
+    $username = Session::get('username');
 
-    $channel = Session::get('channel');
+    $host = Session::get('host');
 
-    $session['channel'] = APP . "sys/network/{$channel}.server";
+    $session['host'] = APP . "etc/hosts/{$host}/sys/motd";
 
-    $session['user'] = APP . "etc/passwd/{$channel}/{$nickname}.user";
+    $session['username'] = APP . "etc/hosts/{$host}/home/{$username}";
 
-    $session['passwd'] = APP . "etc/passwd/{$channel}/";
+    $session['passwd'] = APP . "etc/hosts/{$host}/sys/passwd";
 
-    $session['log'] = APP . "var/system/{$channel}.{$nickname}.log";
+    $session['log'] = APP . "etc/hosts/{$host}/sys/system.log";
       
     $user_ip = getVisitorIP();
 

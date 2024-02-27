@@ -1,31 +1,21 @@
 <?php
 
-if($input == '/clear') {
+if($input == 'CLEAR') {
 
-	$data = preg_replace("/<div user='{$nickname}' [^>]*>.*?<\/div>/i", '', $data);
-      
-    $data = $dec->encrypt($data);
+	$data = preg_replace("/<div user='{$host}' [^>]*>.*?<\/div>", '', $data);
 
-    file_put_contents($session['channel'], $data);
+    file_put_contents($session['host'], $data);
 
     $data = false;
 }
 
 
-if($input == '/help') {
+if($input == 'HELP') {
 
 	    $username = 'system';
 
-        $input = '<br>/clear - clear your comments.';
+        $input = '<br>CLEAR - clear your comments.';
 
-        $input .= '<br>/exit - leave channel.<br>';
+        $input .= '<br>DC - disconnect from host.<br>';
   
-}
-
-if($input == '/away') {
-
-    $msg = str_replace('/away', '', $input);
-
-    $input = "AWAY: {$msg}";
-
 }

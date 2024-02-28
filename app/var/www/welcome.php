@@ -10,3 +10,4 @@
     <p>Disconnect IMMEDIATELY if you are not an authorized user!</p>
     <br>
     <p>Connect to host with "LOGIN [host] [username]@[password]".<p>
+    <p>Type "HELP" for more information.<p>

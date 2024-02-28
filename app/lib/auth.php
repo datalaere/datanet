@@ -22,7 +22,7 @@
 
     if($input == 'HELP') {
 
-        echo '<br>Connect to host with "LOGIN [host] [username]@[password]".<br>';
+        echo '<br>Connect to host type "LOGIN [host] [username]@[password]". <br> Show active host type "HOSTS/NETSTAT".<br>';
 
         return false;
     }

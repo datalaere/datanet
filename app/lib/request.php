@@ -13,7 +13,7 @@
 
         } else {
           
-            echo "<div  class='response'>(".date('H:i:s').") <b>".'system'."</b>: ERROR. Please contact sysadmin!<br></div>";
+            echo "<div user='system' class='response'>(".date('H:i:s').") <b>".'system'."</b>: ERROR. Please contact sysadmin!<br></div>";
           
         }
       

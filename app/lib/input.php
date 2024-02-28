@@ -4,6 +4,7 @@
 
     $username = Session::get('username');
 
+    $host = Session::get('host');
 
     $data = file_get_contents($session['host']);
 

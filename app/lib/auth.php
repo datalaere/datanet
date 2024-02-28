@@ -8,6 +8,17 @@
         return false;
    }
 
+   if($input == 'HOSTS' OR $input == 'NETSTAT') {
+        $active_hosts = cmd_scan(APP . 'etc/hosts/'); 
+        echo "<br><p>host (date)</p>";
+        echo '_______________________________';
+        foreach( $active_hosts as $host ):
+            $date = date("F d, Y H:i", filemtime(APP . 'etc/hosts/'. $host));
+            echo "<p>{$host}  ({$date})</p>";
+        endforeach;
+
+        return true;
+    }
 
     if($input == 'HELP') {
 
@@ -126,7 +137,7 @@ if(file_exists($session['username'])) {
 
         $session_data = [
             'id' => uniqid($user_ip),
-            'connected' => getTimestamp(),
+            'date' => getTimestamp(),
             'ip' => $user_ip,
             'username' => filterInput(Session::get('username'), true),
             'password' => password_hash(Session::get('password'), PASSWORD_DEFAULT),
@@ -151,8 +162,10 @@ if(file_exists($session['username'])) {
         $color = $session_data['color'];
 
         //Simple welcome message
+        if(!file_exists($session['host'])) {
+            $data .= "<div user='system' class='response'>Welcome to {$host} <br><br> UNAUTHORIZED ACCESS TO THIS DEVICE IS PROHIBITED <br><br> You must have explicit, authorized permission to access or configure this device. Unauthorized attempts and actions to access or use this system may result in civil and/or criminal penalties. All activities performed on this device are logged and monitored.<br><br></div>". PHP_EOL;
+        }
 
-        $data .= "Welcome to {$host} <br><br> UNAUTHORIZED ACCESS TO THIS DEVICE IS PROHIBITED <br><br> You must have explicit, authorized permission to access or configure this device. Unauthorized attempts and actions to access or use this system may result in civil and/or criminal penalties. All activities performed on this device are logged and monitored.<br><br>";
         $data .= "<div user='{$username}' $color class='response'>[" . $date . "] <b>". $username ."</b> (". $user_ip .") connected to {$host}.<br></div>". PHP_EOL;
 
         file_put_contents($session['host'], $data);

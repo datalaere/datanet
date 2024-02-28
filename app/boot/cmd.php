@@ -20,7 +20,7 @@ function cmd_connect($input, $storage = '') {
                     return false;
                 }
 
-                if(!preg_match('/^[a-zA-Z]+[a-zA-Z0-9._]+$/', $input[1]) OR !preg_match('/^[a-zA-Z]+[a-zA-Z0-9._]+$/', explode('@', $input[2])[0]) OR !preg_match('/^[a-zA-Z]+[a-zA-Z0-9._]+$/', explode('@', $input[2])[1])) {
+                if(!preg_match('/^[a-z]+[a-z0-9._]+$/', $input[1]) OR !preg_match('/^[a-z]+[a-z0-9._]+$/', explode('@', $input[2])[0]) OR !preg_match('/^[a-z]+[a-z0-9._]+$/', explode('@', $input[2])[1])) {
 
                     return false;
                 }
@@ -55,7 +55,7 @@ function cmd_connect($input, $storage = '') {
                     return false;
                 }
 
-        $connection['id'] = uniqid();
+        $connection['session_id'] = uniqid();
 
         $connection['ip'] = getVisitorIP();
 
